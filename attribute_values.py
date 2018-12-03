@@ -53,6 +53,9 @@ class TestContext (BaseContext):
             'color': glGetAttribLocation(self.shader, 'color'),
             'tween': glGetUniformLocation(self.shader, 'tween'),
         }
+        self.hop = {
+            'position': 0, 'tweened': 12, 'color': 24
+        }
 
         self.timer = Timer(duration=2.0, repeating=1)
         self.timer.addEventHandler("fraction", self.OnTimerFraction)
@@ -68,25 +71,21 @@ class TestContext (BaseContext):
         try:
             self.vbo.bind()
             try:
-                glEnableVertexAttribArray(self.locations['position'])
-                glEnableVertexAttribArray(self.locations['tweened'])
-                glEnableVertexAttribArray(self.locations['color'])
+                for k in self.hop:
+                    glEnableVertexAttribArray(self.locations[k])
 
                 # set data (position, tweened, color) using self.vbo array
                 stride = 9*4
-                glVertexAttribPointer(
-                    self.locations['position'], 3, GL_FLOAT, False, stride, self.vbo)
-                glVertexAttribPointer(
-                    self.locations['tweened'], 3, GL_FLOAT, False, stride, self.vbo+12)
-                glVertexAttribPointer(
-                    self.locations['color'], 3, GL_FLOAT, False, stride, self.vbo+24)
+                hop = 12
+                for k, v in self.hop.items():
+                    glVertexAttribPointer(
+                        self.locations[k], 3, GL_FLOAT, False, stride, self.vbo+v)
 
                 glDrawArrays(GL_TRIANGLES, 0, 9)
             finally:
                 self.vbo.unbind()
-                glDisableVertexAttribArray(self.locations['position'])
-                glDisableVertexAttribArray(self.locations['tweened'])
-                glDisableVertexAttribArray(self.locations['color'])
+                for k in self.hop:
+                    glDisableVertexAttribArray(self.locations[k])
         finally:
             shaders.glUseProgram(0)
 
