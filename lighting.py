@@ -50,9 +50,9 @@ class TestContext (BaseContext):
             """
         void main() {
             gl_Position = gl_ModelViewProjectionMatrix * vec4(Vertex_position, 1.0);
-            vec3 EC_Light_location = gl_NormalMatrix * Light_location;
+            // vec3 EC_Light_location = gl_NormalMatrix * Light_location;
             float diffuse_weight = phong_weightCalc(
-                normalize(EC_Light_location),
+                normalize(gl_NormalMatrix * Light_location),
                 normalize(gl_NormalMatrix * Vertex_normal)
             );
             baseColor = clamp(
